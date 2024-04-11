@@ -1,66 +1,66 @@
 console.log(housingData[0])
+//CODE BLOCK 1//
+var stateDropdown = d3.select("#selDataset");
 
+var states = [];
+
+for (let i = 0; i < housingData.length; i++) {
+
+    if (states.includes(housingData[i].State) == false) {
+        
+        states.push(housingData[i].State);
+    }
+}
+
+states.sort();
+// CODE BLOCK 1 END //
+
+// CODE BLOCK 2 //
+var zipDropdown = d3.select("#selDataset2");
+
+var zipcodes = [];
+
+for (let i = 0; i < housingData.length; i++) {
+
+    if (zipcodes.includes(housingData[i]['Zip Code']) == false) {
+        
+        zipcodes.push(housingData[i]['Zip Code']);
+    }
+}
+// CODE BLOCK 2 END //
 function init() {
 
-    let stateDropdown = d3.select("#selDataset");
-
-    var states = [];
-
-    for (let i = 0; i < housingData.length; i++) {
-
-        if (states.includes(housingData[i].State) == false) {
-            
-            states.push(housingData[i].State);
-
-            //stateDropdown.append("option").text(housingData[i].State).property("value", housingData[i].State);
-
-        }
-    }
-
-    states.sort();
+    // Code Block 1//
 
     states.map(state => stateDropdown.append("option").text(state).property("value", state));
 
+    //Code Block 2 //
+
+    zipcodes.map(zipcode => zipDropdown.append("option").text(zipcode).property("value", zipcode));
+
     let firstState = states[0];
-
-    let zipDropdown = d3.select("#selDataset2");
-
-    var zipcodes = [];
-
-    for (let i = 0; i < housingData.length; i++) {
-
-        if (zipcodes.includes(housingData[i]['Zip Code']) == false) {
-            
-            zipcodes.push(housingData[i]['Zip Code']);
-
-            zipDropdown.append("option").text(housingData[i]['Zip Code']).property("value", housingData[i]['Zip Code']);
-
-        }
-    }
 
     createScatter(firstState);
 }
 
 function createScatter(selectItem) {
 
-    if (d3.select("#selDataset").text().includes(selectItem) == true) {
+    if (stateDropdown.text().includes(selectItem) == true) {
 
-        var stateCurrent = housingData.filter(state => state.State == selectItem);
+        var itemCurrent = housingData.filter(property => property.State == selectItem);
     }
     else {
 
-        var stateCurrent = housingData.filter(zipcode => zipcode['Zip Code'] == selectItem);
+        var itemCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
     }
-
-    //let stateCurrent = housingData.filter(state => state.State == selectItem);
 
     let price  = [];
     let income = [];
 
-    for (let i = 0; i < stateCurrent.length; i++) {
+    for (let i = 0; i < itemCurrent.length; i++) {
 
-        price.push(stateCurrent[i].Price);
-        income.push(stateCurrent[i]["Median Household Income"]);
+        price.push(itemCurrent[i].Price);
+        income.push(itemCurrent[i]["Median Household Income"]);
     }
 
     let trace1 = {
@@ -104,30 +104,31 @@ function createScatter(selectItem) {
     let data = [trace1];
 
     Plotly.newPlot('scatter', data, layout);
-
 }
 
 function optionChanged(item) {
 
-    console.log("Showing results for ", item);
+    console.log("Showing results for", item);
 
     createScatter(item);
 
-    if (d3.select("#selDataset").text().includes(item) == true) {
+    if (stateDropdown.text().includes(item) == true) {
 
-        d3.select("#selDataset2").selectAll("option").remove();
+        zipDropdown.selectAll("option").remove();
 
-        let zipcodes = housingData.filter(zipcode => zipcode.State == item);
+        let zipcodes = housingData.filter(property => property.State == item);
 
-        zipArray = [];
+        stateZipcodes = [];
 
         for (let i = 0; i < zipcodes.length; i++) {
+
+            let currentZip = zipcodes[i]['Zip Code'];
             
-            if (zipArray.includes(zipcodes[i]['Zip Code']) == false) {
+            if (stateZipcodes.includes(currentZip) == false) {
 
-                zipArray.push(zipcodes[i]['Zip Code']);
+                stateZipcodes.push(currentZip);
 
-                d3.select("#selDataset2").append("option").text(zipcodes[i]['Zip Code']).property("value", zipcodes[i]['Zip Code']);
+                zipDropdown.append("option").text(currentZip).property("value", currentZip);
 
             }
         }
