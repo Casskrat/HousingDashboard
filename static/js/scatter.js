@@ -1,5 +1,5 @@
 console.log(housingData[0])
-//CODE BLOCK 1//
+
 var stateDropdown = d3.select("#selDataset");
 
 var states = [];
@@ -13,9 +13,7 @@ for (let i = 0; i < housingData.length; i++) {
 }
 
 states.sort();
-// CODE BLOCK 1 END //
 
-// CODE BLOCK 2 //
 var zipDropdown = d3.select("#selDataset2");
 
 var zipcodes = [];
@@ -27,20 +25,25 @@ for (let i = 0; i < housingData.length; i++) {
         zipcodes.push(housingData[i]['Zip Code']);
     }
 }
-// CODE BLOCK 2 END //
-function init() {
 
-    // Code Block 1//
+stateCompare = d3.select("#selCompare");
+zipCompare = d3.select("#selCompare2");
+
+function init() {
 
     states.map(state => stateDropdown.append("option").text(state).property("value", state));
 
-    //Code Block 2 //
-
     zipcodes.map(zipcode => zipDropdown.append("option").text(zipcode).property("value", zipcode));
 
+    states.map(state => stateCompare.append("option").text(state).property("value", state));
+
+    zipcodes.map(zipcode => zipCompare.append("option").text(zipcode).property("value", zipcode));
+
     let firstState = states[0];
+    let secondState = states[1];
 
     createScatter(firstState);
+    createComparescatter(secondState);
 }
 
 function createScatter(selectItem) {
@@ -79,7 +82,7 @@ function createScatter(selectItem) {
         title: {
             text: `Median Household Income vs. House Price (${selectItem})`,
             font: {
-                size: 20
+                size: 16
             }
         },
         xaxis: {
@@ -106,13 +109,112 @@ function createScatter(selectItem) {
     Plotly.newPlot('scatter', data, layout);
 }
 
+function createComparescatter(selectItem) {
+
+    if (stateCompare.text().includes(selectItem) == true) {
+
+        var compCurrent = housingData.filter(property => property.State == selectItem);
+    }
+    else {
+
+        var compCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
+    }
+
+    let priceComp  = [];
+    let incomeComp = [];
+
+    for (let i = 0; i < compCurrent.length; i++) {
+
+        priceComp.push(compCurrent[i].Price);
+        incomeComp.push(compCurrent[i]["Median Household Income"]);
+    }
+
+    let trace2 = {
+        x: incomeComp,
+        y: priceComp,
+        mode: 'markers',
+        type: 'scatter',
+        text: 'Living Space: ?',
+        marker: {
+            size: 7,
+            color: incomeComp
+        }
+    };
+
+    let layout2 = {
+        title: {
+            text: `Median Household Income vs. House Price (${selectItem})`,
+            font: {
+                size: 16
+            }
+        },
+        xaxis: {
+            title: {
+                text: 'Income',
+                font: {
+                    size: 12
+                }
+            }
+            
+        },
+        yaxis: {
+            title: {
+                text: 'Price',
+                font: {
+                    size: 12
+                }
+            }
+        }
+    }
+
+    let data2 = [trace2];
+
+    Plotly.newPlot('scatter2', data2, layout2);
+}
+
+function adjustZips(dropdown, state) {
+
+    if (dropdown.text().includes(state) == true) {
+
+        if (dropdown == stateDropdown) {
+
+            zipDropdown.selectAll("option").remove();
+            var setZips = zipDropdown;
+        }
+        else {
+
+            zipCompare.selectAll("option").remove();
+            var setZips = zipCompare;
+        }
+
+        let zipcodes = housingData.filter(property => property.State == state);
+
+        stateZipcodes = [];
+
+        for (let i = 0; i < zipcodes.length; i++) {
+
+            let currentZip = zipcodes[i]['Zip Code'];
+            
+            if (stateZipcodes.includes(currentZip) == false) {
+
+                stateZipcodes.push(currentZip);
+
+                setZips.append("option").text(currentZip).property("value", currentZip);
+
+            }
+        }
+    }
+}
+
 function optionChanged(item) {
 
     console.log("Showing results for", item);
 
     createScatter(item);
 
-    if (stateDropdown.text().includes(item) == true) {
+    adjustZips(stateDropdown, item);
+
+    /* if (stateDropdown.text().includes(item) == true) {
 
         zipDropdown.selectAll("option").remove();
 
@@ -132,7 +234,16 @@ function optionChanged(item) {
 
             }
         }
-    }
+    } */
+}
+
+function optionChanged2(item) {
+
+    console.log("Showing comparison results for", item);
+
+    createComparescatter(item);
+
+    adjustZips(stateCompare, item);
 }
 
 init();

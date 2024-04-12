@@ -14,38 +14,54 @@
 <body>
 
   <div class="container">
+
     <div class="row">
       <div class="col-md-12 p-5 text-center bg-light">
         <h1>National Housing Cost Dashboard</h1>
         <p>Use the interactive charts below to explore the dataset</p>
       </div>
     </div>
+
     <div class="row">
-      <div class="col-md-2">
+
+      <div class="col-2">
         <div class="card card-body bg-light">
           <h6>State:</h6>
           <select id="selDataset" onchange="optionChanged(this.value)"></select>
         </div>
-        <div class="col-md-12">
+        <div class="col-12">
           <div class="card card-body bg-light">
             <h6>Zip Code:</h6>
             <select id="selDataset2" onchange="optionChanged(this.value)"></select>
           </div>
-          <div id="sample-metadata" class="card-body"></div>
+          <div class="card card-body bg-light">
+            <h6>State to Compare:</h6>
+            <select id="selCompare" onchange="optionChanged2(this.value)"></select>
+          </div>
+          <div class="card card-body bg-light">
+            <h6>Zip Code to Compare:</h6>
+            <select id="selCompare2" onchange="optionChanged2(this.value)"></select>
+          </div>
         </div>
       </div>
-      <div class="col-md-12">
+      
+      <div class="col-5">
         <div id="scatter"></div>
       </div>
-      <div class="col-md-5">
-        <div id="gauge"></div>
+      <div class="col-5">
+        <div id="scatter2"></div>
       </div>
+
     </div>
+
     <div class="row">
-      <div class="col-md-12">
-        <div id="bubble"></div>
+
+      <div class="col-12">
+        <div id="othercharts"></div>
       </div>
+
     </div>
+
   </div>
 
   <script type="text/javascript" src="static/js/data.js"></script>
