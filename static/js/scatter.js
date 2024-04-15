@@ -46,6 +46,17 @@ function init() {
     createComparescatter(secondState);
 }
 
+function mean(array) {
+    return array.reduce((a, b) => a + b) / array.length;
+}
+
+function getStandardDeviation (array) {
+    const n = array.length
+    const mean = array.reduce((a, b) => a + b) / n
+    return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+}
+
+
 function createScatter(selectItem) {
 
     if (stateDropdown.text().includes(selectItem) == true) {
@@ -59,35 +70,78 @@ function createScatter(selectItem) {
 
     let price  = [];
     let income = [];
+    let space = [];
 
     for (let i = 0; i < itemCurrent.length; i++) {
 
         price.push(itemCurrent[i].Price);
         income.push(itemCurrent[i]["Median Household Income"]);
+        space.push(itemCurrent[i]["Living Space"]);
     }
 
     let trace1 = {
+        x: price,
+        name: 'Price',
+        type: 'histogram',
+        autobinx: false,
+        histnorm: 'percent',
+        opacity: 0.75,
+        xbins: {
+            end: mean(price) + getStandardDeviation(price) * 2,
+            size: 50000,
+            start: 0
+        },
+        marker: {color: 'red'}
+    };
+
+    let trace2 = {
         x: income,
+        name: 'Income',
+        type: 'histogram',
+        autobinx: false,
+        histnorm: 'percent',
+        opacity: 0.75,
+        xbins: {
+            end: Math.max(...income),
+            size: 20000,
+            start: 0
+        },
+        marker: {color: 'green'}
+    };
+
+    let layoutHist = {
+        barmode: 'overlay',
+        title: {
+            text: `(${selectItem})`,
+            font: {
+                size: 16
+            }
+        },
+        yaxis: {title: "Percent"}
+    };
+
+    let trace3 = {
+        x: space,
         y: price,
         mode: 'markers',
         type: 'scatter',
-        text: 'Living Space: ?',
         marker: {
             size: 7,
-            color: income
+            color: space,
+            colorscale: 'Jet'
         }
     };
 
     let layout = {
         title: {
-            text: `Median Household Income vs. House Price (${selectItem})`,
+            text: `(${selectItem})`,
             font: {
                 size: 16
             }
         },
         xaxis: {
             title: {
-                text: 'Income',
+                text: 'Living Space',
                 font: {
                     size: 12
                 }
@@ -104,9 +158,13 @@ function createScatter(selectItem) {
         }
     }
 
-    let data = [trace1];
+    var dataHist = [trace1, trace2];
 
-    Plotly.newPlot('scatter', data, layout);
+    Plotly.newPlot('scatter', dataHist, layoutHist);
+
+    var data = [trace3];
+
+    Plotly.newPlot('layout_scatter', data, layout);
 }
 
 function createComparescatter(selectItem) {
@@ -122,35 +180,78 @@ function createComparescatter(selectItem) {
 
     let priceComp  = [];
     let incomeComp = [];
+    let spaceComp = [];
 
     for (let i = 0; i < compCurrent.length; i++) {
 
         priceComp.push(compCurrent[i].Price);
         incomeComp.push(compCurrent[i]["Median Household Income"]);
+        spaceComp.push(compCurrent[i]["Living Space"]);
     }
+
+    let trace1 = {
+        x: priceComp,
+        name: 'Price',
+        type: 'histogram',
+        autobinx: false,
+        histnorm: 'percent',
+        opacity: 0.75,
+        xbins: {
+            end: mean(priceComp) + getStandardDeviation(priceComp) * 2,
+            size: 50000,
+            start: 0
+        },
+        marker: {color: 'red'}
+    };
 
     let trace2 = {
         x: incomeComp,
+        name: 'Income',
+        type: 'histogram',
+        autobinx: false,
+        histnorm: 'percent',
+        opacity: 0.75,
+        xbins: {
+            end: Math.max(...incomeComp),
+            size: 20000,
+            start: 0
+        },
+        marker: {color: 'green'}
+    };
+
+    let layoutHist = {
+        barmode: 'overlay',
+        title: {
+            text: `(${selectItem})`,
+            font: {
+                size: 16
+            }
+        },
+        yaxis: {title: "Percent"}
+    };
+
+    let trace3 = {
+        x: spaceComp,
         y: priceComp,
         mode: 'markers',
         type: 'scatter',
-        text: 'Living Space: ?',
         marker: {
             size: 7,
-            color: incomeComp
+            color: spaceComp,
+            colorscale: 'Jet'
         }
     };
 
-    let layout2 = {
+    let layout = {
         title: {
-            text: `Median Household Income vs. House Price (${selectItem})`,
+            text: `(${selectItem})`,
             font: {
                 size: 16
             }
         },
         xaxis: {
             title: {
-                text: 'Income',
+                text: 'Living Space',
                 font: {
                     size: 12
                 }
@@ -167,9 +268,14 @@ function createComparescatter(selectItem) {
         }
     }
 
-    let data2 = [trace2];
+    let dataHist = [trace1, trace2];
 
-    Plotly.newPlot('scatter2', data2, layout2);
+    Plotly.newPlot('scatter2', dataHist, layoutHist);
+
+    let data = [trace3];
+
+    Plotly.newPlot('layout_scatter2', data, layout);
+
 }
 
 function adjustZips(dropdown, state) {
@@ -214,27 +320,6 @@ function optionChanged(item) {
 
     adjustZips(stateDropdown, item);
 
-    /* if (stateDropdown.text().includes(item) == true) {
-
-        zipDropdown.selectAll("option").remove();
-
-        let zipcodes = housingData.filter(property => property.State == item);
-
-        stateZipcodes = [];
-
-        for (let i = 0; i < zipcodes.length; i++) {
-
-            let currentZip = zipcodes[i]['Zip Code'];
-            
-            if (stateZipcodes.includes(currentZip) == false) {
-
-                stateZipcodes.push(currentZip);
-
-                zipDropdown.append("option").text(currentZip).property("value", currentZip);
-
-            }
-        }
-    } */
 }
 
 function optionChanged2(item) {

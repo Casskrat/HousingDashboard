@@ -13,7 +13,7 @@
 
 <body>
 
-  <div class="container">
+  <div class="container-fluid">
 
     <div class="row">
       <div class="col-md-12 p-5 text-center bg-light">
@@ -44,20 +44,31 @@
           </div>
         </div>
       </div>
-      
-      <div class="col-5">
-        <div id="scatter"></div>
-      </div>
-      <div class="col-5">
-        <div id="scatter2"></div>
+
+      <div class="col-8">
+        <h5 class="card-header text-center text-white bg-info">Median Household Income vs. House Price</h5>
+        <div class ="card bg-light card-group">
+          <div id="scatter" class="col-5 mx-auto"></div>
+          <div id="scatter2" class="col-5 mx-auto"></div>
+        </div>
+        <div class="card-footer bg-info">
+          <h5 class="pull-left"> Maybe fill in state names here</h5>
+        </div>
       </div>
 
     </div>
 
-    <div class="row">
+    <div class="row justify-content-center">
 
-      <div class="col-12">
-        <div id="othercharts"></div>
+      <div class="col-8">
+        <h5 class="card-header text-center text-white bg-info">Living Space vs. House Price</h5>
+        <div class="card bg-light card-group">
+          <div id="layout_scatter" class="col-5 mx-auto"></div>
+          <div id="layout_scatter2" class="col-5 mx-auto"></div>
+        </div>
+        <div class="card-footer bg-info">
+          <h5 class="pull-left">Maybe fill in state names here</h5>
+        </div>
       </div>
 
     </div>
