@@ -308,6 +308,10 @@ function createComparescatter(selectItem) {
 
 }
 
+function populateTable(selectItem) {
+
+}
+
 function adjustZips(dropdown, citystate) {
 
     //if (dropdown.text().includes(citystate) == true) {

@@ -9,6 +9,18 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <style>
+    table, th, td {
+      border: 1px solid black;
+    }
+    table.center {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+  </style>
 </head>
 
 <body>
@@ -85,6 +97,46 @@
         </div>
       </div>
 
+    </div>
+
+  </div>
+
+  <div class="row justify-content-center">
+
+    <div class="col-8">
+      <h5 class="card-header text-center bg-light">Summary Table</h5>
+      <table id="comparison-table" class="col-12" style="width: 100%">
+        <tr class="columnHeaders">
+          <th class="columnHeader emptyCell" title="Empty cell" style="width: 20%"></th>
+          <th scope ="col" class="columnHeader text-center">Loc 1</th>
+          <th scope ="col" class="columnHeader text-center">Loc 2</th>
+        </tr>
+        <tr>
+          <th scope="col" class="columnHeader text-center">Price</th>
+          <td id="price"></td>
+          <td id="price2"></td>
+        </tr>
+        <tr>
+          <th scope="col" class="columnHeader text-center">Median Household Income</th>
+          <td id="income"></td>
+          <td id="income2"></td>
+        </tr>
+        <tr>
+          <th scope="col" class="columnHeader text-center">Living Space</th>
+          <td id="space"></td>
+          <td id="space2"></td>
+        </tr>
+        <tr>
+          <th scope="col" class="columnHeader text-center">Average Beds/Baths</th>
+          <td id="rooms"></td>
+          <td id="rooms2"></td>
+        </tr>
+        <tr>
+          <th scope="col" class="columnHeader text-center">Population</th>
+          <td id="pop"></td>
+          <td id="pop2"></td>
+        </tr>
+      </table>
     </div>
 
   </div>
