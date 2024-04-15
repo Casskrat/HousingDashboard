@@ -13,10 +13,26 @@ for (let i = 0; i < housingData.length; i++) {
 }
 
 states.sort();
+states.unshift("Select state...");
+
+var cityDropdown = d3.select("#selCity");
+
+var cities = [];
+
+for (let i = 0; i < housingData.length; i++) {
+
+    if (cities.includes(housingData[i].City) == false) {
+        
+        cities.push(housingData[i].City);
+    }
+}
+
+cities.sort();
+cities.unshift("Select city...");
 
 var zipDropdown = d3.select("#selDataset2");
 
-var zipcodes = [];
+var zipcodes = ["Select zip code..."];
 
 for (let i = 0; i < housingData.length; i++) {
 
@@ -27,20 +43,25 @@ for (let i = 0; i < housingData.length; i++) {
 }
 
 stateCompare = d3.select("#selCompare");
+cityCompare = d3.select("#selCity2");
 zipCompare = d3.select("#selCompare2");
 
 function init() {
 
     states.map(state => stateDropdown.append("option").text(state).property("value", state));
 
+    cities.map(city => cityDropdown.append("option").text(city).property("value", city));
+
     zipcodes.map(zipcode => zipDropdown.append("option").text(zipcode).property("value", zipcode));
 
     states.map(state => stateCompare.append("option").text(state).property("value", state));
 
+    cities.map(city => cityCompare.append("option").text(city).property("value", city));
+
     zipcodes.map(zipcode => zipCompare.append("option").text(zipcode).property("value", zipcode));
 
-    let firstState = states[0];
-    let secondState = states[1];
+    let firstState = states[1];
+    let secondState = states[2];
 
     createScatter(firstState);
     createComparescatter(secondState);
@@ -62,6 +83,10 @@ function createScatter(selectItem) {
     if (stateDropdown.text().includes(selectItem) == true) {
 
         var itemCurrent = housingData.filter(property => property.State == selectItem);
+    }
+    else if (cityDropdown.text().includes(selectItem) == true) {
+
+        var itemCurrent = housingData.filter(property => property.City == selectItem);
     }
     else {
 
@@ -173,6 +198,11 @@ function createComparescatter(selectItem) {
 
         var compCurrent = housingData.filter(property => property.State == selectItem);
     }
+    else if (cityCompare.text().includes(selectItem) == true) {
+
+        var compCurrent = housingData.filter(property => property.City == selectItem);
+
+    }
     else {
 
         var compCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
@@ -278,24 +308,64 @@ function createComparescatter(selectItem) {
 
 }
 
-function adjustZips(dropdown, state) {
+function adjustZips(dropdown, citystate) {
 
-    if (dropdown.text().includes(state) == true) {
+    //if (dropdown.text().includes(citystate) == true) {
 
         if (dropdown == stateDropdown) {
 
+            cityDropdown.selectAll("option").remove();
+            var setCities = cityDropdown;
+
             zipDropdown.selectAll("option").remove();
             var setZips = zipDropdown;
+            var zipcodes = housingData.filter(property => property.State == citystate);
+        }
+        else if (dropdown == stateCompare) {
+
+            cityCompare.selectAll("option").remove();
+            var setCities = cityCompare;
+
+            zipCompare.selectAll("option").remove();
+            var setZips = zipCompare;
+            var zipcodes = housingData.filter(property => property.State == citystate);
+        }
+        else if (dropdown == cityDropdown) {
+
+            zipDropdown.selectAll("option").remove();
+            var setZips = zipDropdown;
+            var zipcodes = housingData.filter(property => property.City == citystate);
         }
         else {
 
             zipCompare.selectAll("option").remove();
             var setZips = zipCompare;
+            var zipcodes = housingData.filter(property => property.City == citystate);
         }
 
-        let zipcodes = housingData.filter(property => property.State == state);
+        if (setCities) {
 
-        stateZipcodes = [];
+            let cities = housingData.filter(property => property.State == citystate);
+
+            let stateCities = [];
+
+            for (let i = 0; i < cities.length; i++) {
+
+                let currentCity = cities[i].City;
+                
+                if (stateCities.includes(currentCity) == false) {
+
+                    stateCities.push(currentCity);
+
+                    setCities.append("option").text(currentCity).property("value", currentCity);
+
+                }
+            }
+        }
+
+        //let zipcodes = housingData.filter(property => property.State == citystate);
+
+        let stateZipcodes = [];
 
         for (let i = 0; i < zipcodes.length; i++) {
 
@@ -309,7 +379,7 @@ function adjustZips(dropdown, state) {
 
             }
         }
-    }
+    //}
 }
 
 function optionChanged(item) {
@@ -318,8 +388,14 @@ function optionChanged(item) {
 
     createScatter(item);
 
-    adjustZips(stateDropdown, item);
+    if (states.includes(item) == true) {
 
+        adjustZips(stateDropdown, item);
+    }
+    else if (cities.includes(item) == true) {
+
+        adjustZips(cityDropdown, item);
+    }
 }
 
 function optionChanged2(item) {
@@ -328,7 +404,14 @@ function optionChanged2(item) {
 
     createComparescatter(item);
 
-    adjustZips(stateCompare, item);
+    if (states.includes(item) == true) {
+
+        adjustZips(stateCompare, item);
+    }
+    else if (cities.includes(item) == true) {
+
+        adjustZips(cityCompare, item);
+    }
 }
 
 init();

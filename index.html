@@ -31,16 +31,14 @@
         </div>
         <div class="col-12">
           <div class="card card-body bg-light">
+            <h6>City</h6>
+            <select id="selCity" onchange="optionChanged(this.value)"></select>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card card-body bg-light">
             <h6>Zip Code:</h6>
             <select id="selDataset2" onchange="optionChanged(this.value)"></select>
-          </div>
-          <div class="card card-body bg-light">
-            <h6>State to Compare:</h6>
-            <select id="selCompare" onchange="optionChanged2(this.value)"></select>
-          </div>
-          <div class="card card-body bg-light">
-            <h6>Zip Code to Compare:</h6>
-            <select id="selCompare2" onchange="optionChanged2(this.value)"></select>
           </div>
         </div>
       </div>
@@ -53,6 +51,22 @@
         </div>
         <div class="card-footer bg-info">
           <h5 class="pull-left"> Maybe fill in state names here</h5>
+        </div>
+      </div>
+
+      <div class="col-2">
+        <div class="card card-body bg-light">
+          <h6>State to Compare:</h6>
+          <select id="selCompare" onchange="optionChanged2(this.value)"></select>
+        </div>
+        <div class="col-12">
+          <div class="card card-body bg-light">
+            <h6>City to Compare:</h6>
+            <select id="selCity2" onchange="optionChanged2(this.value)"></select>
+          </div>
+        <div class="card card-body bg-light">
+          <h6>Zip Code to Compare:</h6>
+          <select id="selCompare2" onchange="optionChanged2(this.value)"></select>
         </div>
       </div>
 
