@@ -65,6 +65,7 @@ function init() {
 
     createScatter(firstState);
     createComparescatter(secondState);
+    populateTable(firstState, secondState);
 }
 
 function mean(array) {
@@ -79,7 +80,7 @@ function getStandardDeviation (array) {
 
 
 function createScatter(selectItem) {
-
+// maybe make a variable based function out of this selected part so its not repeated 3 times in the code//
     if (stateDropdown.text().includes(selectItem) == true) {
 
         var itemCurrent = housingData.filter(property => property.State == selectItem);
@@ -103,7 +104,7 @@ function createScatter(selectItem) {
         income.push(itemCurrent[i]["Median Household Income"]);
         space.push(itemCurrent[i]["Living Space"]);
     }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////
     let trace1 = {
         x: price,
         name: 'Price',
@@ -308,8 +309,91 @@ function createComparescatter(selectItem) {
 
 }
 
-function populateTable(selectItem) {
+function setLocation(location) {
 
+    if (stateDropdown.text().includes(location) == true) {
+
+        var itemCurrent = housingData.filter(property => property.State == location);
+    }
+    else if (cityDropdown.text().includes(location) == true) {
+
+        var itemCurrent = housingData.filter(property => property.City == location);
+    }
+    else {
+
+        var itemCurrent = housingData.filter(property => property['Zip Code'] == location);
+    }
+
+    return itemCurrent;
+}
+
+function populateTable(selectItem, compareItem) {
+
+    d3.select("#loc1").text(selectItem);
+    d3.select("#loc2").text(compareItem);
+    
+
+/*     if (stateDropdown.text().includes(selectItem) == true) {
+
+        var itemCurrent = housingData.filter(property => property.State == selectItem);
+    }
+    else if (cityDropdown.text().includes(selectItem) == true) {
+
+        var itemCurrent = housingData.filter(property => property.City == selectItem);
+    }
+    else {
+
+        var itemCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
+    } */
+
+    let itemCurrent = [setLocation(selectItem), setLocation(compareItem)];
+
+    for (let i = 0; i < itemCurrent.length; i++) {
+
+        console.log(itemCurrent[i].length);
+
+        let price  = [];
+        let income = [];
+        let space = [];
+        let bed = [];
+        let bath = [];
+        let pop = [];
+        let zips = [];
+        let popzips = [];
+
+        for (let j = 0; j < itemCurrent[i].length; j++) {
+
+            let current = itemCurrent[i][j];
+
+            price.push(current.Price);
+            space.push(current["Living Space"]);
+            bed.push(current.Beds);
+            bath.push(current.Baths);
+
+            if (income.includes(current["Median Household Income"]) == false && zips.includes(current['Zip Code']) == false) {
+
+                income.push(current["Median Household Income"]);
+                zips.push(current['Zip Code']);
+            }
+            if (pop.includes(current['Zip Code Density']) == false && popzips.includes(current['Zip Code']) == false) {
+
+                pop.push(current['Zip Code Density']);
+                popzips.push(current['Zip Code']);
+
+            }
+
+        }
+
+        d3.select(`#price${i}`).text(`$${Math.round(mean(price))}`);
+
+        d3.select(`#income${i}`).text(`$${Math.round(mean(income))}`);
+
+        d3.select(`#space${i}`).text(`${Math.round(mean(space))} sq ft`);
+
+        d3.select(`#rooms${i}`).text(`${Math.round(mean(bed))}/${Math.round(mean(bath))}`);
+
+        d3.select(`#pop${i}`).text(`${Math.round(mean(pop))} per sq mile`);
+    }
 }
 
 function adjustZips(dropdown, citystate) {
