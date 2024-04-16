@@ -1,4 +1,5 @@
 console.log(housingData[0])
+console.log(d3.select("#selCompare").html());
 
 var stateDropdown = d3.select("#selDataset");
 
@@ -315,7 +316,7 @@ function setLocation(location) {
 
         var itemCurrent = housingData.filter(property => property.State == location);
     }
-    else if (cityDropdown.text().includes(location) == true) {
+    else if (cityDropdown.text().includes(location) == true || cityCompare.text().includes(location) == true) {
 
         var itemCurrent = housingData.filter(property => property.City == location);
     }
@@ -323,7 +324,7 @@ function setLocation(location) {
 
         var itemCurrent = housingData.filter(property => property['Zip Code'] == location);
     }
-
+    console.log(itemCurrent);
     return itemCurrent;
 }
 
@@ -350,7 +351,7 @@ function populateTable(selectItem, compareItem) {
 
     for (let i = 0; i < itemCurrent.length; i++) {
 
-        console.log(itemCurrent[i].length);
+        //console.log(itemCurrent[i]);
 
         let price  = [];
         let income = [];
@@ -474,7 +475,12 @@ function optionChanged(item) {
 
     console.log("Showing results for", item);
 
+    var holder = d3.select("#loc2").text();
+
+    console.log("Comparison is", holder);
+
     createScatter(item);
+    populateTable(item, holder);
 
     if (states.includes(item) == true) {
 
@@ -490,7 +496,13 @@ function optionChanged2(item) {
 
     console.log("Showing comparison results for", item);
 
+    var holder = d3.select("#loc1").text();
+
+    console.log("Original is", holder);
+
     createComparescatter(item);
+    populateTable(holder, item); //need fix for colorado springs for some reason having extreme large means
+    
 
     if (states.includes(item) == true) {
 
