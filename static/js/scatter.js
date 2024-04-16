@@ -324,7 +324,7 @@ function setLocation(location) {
 
         var itemCurrent = housingData.filter(property => property['Zip Code'] == location);
     }
-    console.log(itemCurrent);
+    //console.log(itemCurrent);
     return itemCurrent;
 }
 
@@ -354,7 +354,7 @@ function populateTable(selectItem, compareItem) {
         //console.log(itemCurrent[i]);
 
         let price  = [];
-        let income = [];
+        var income = [];
         let space = [];
         let bed = [];
         let bath = [];
@@ -383,7 +383,12 @@ function populateTable(selectItem, compareItem) {
 
             }
 
+            console.log(selectItem, income, mean(income))
+
         }
+
+        //temp fix for colorado springs
+        var income = income.filter(num => num != '');
 
         d3.select(`#price${i}`).text(`$${Math.round(mean(price))}`);
 
