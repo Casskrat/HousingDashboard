@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>National Housing Costs</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <style>
+    table, th, td {
+      border: 1px solid black;
+    }
+    table.center {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    .top_buffer {
+      margin-top: 20px;
+    }
+    th {
+      height: 55px;
+    }
+    .button {
+      border: none;
+      color: black;
+      text-align: center;
+      font-size: 17px;
+      display: inline-block;
+      padding-left: 30%;
+      padding-right: 30%;
+      padding-bottom: 7%;
+      padding-top: 7%;
+      margin-left: 5%;
+      margin-top: 8%;
+      transition-duration: 0.4s;
+      cursor: pointer;
+    }
+    .button1 {
+      border: 2px solid #17a2b8;
+    }
+    .button1:hover {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-md-12 p-5 text-center bg-info">
+        <h1 class="text-white">National Housing Cost Dashboard</h1>
+        <p class="top_buffer">Use the interactive dropdown menus below to explore and compare different U.S. states, cities, and zip codes</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-2 top_buffer">
+        <div class="card card-body bg-light">
+          <h6>State:</h6>
+          <select id="selDataset" onchange="optionChanged(this.value)"></select>
+        </div>
+        <div class="col-12">
+          <div class="card card-body bg-light">
+            <h6>City</h6>
+            <select id="selCity" onchange="optionChanged(this.value)"></select>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card card-body bg-light">
+            <h6>Zip Code:</h6>
+            <select id="selDataset2" onchange="optionChanged(this.value)"></select>
+          </div>
+        </div>
+        <div class="col-12">
+          <button id="map" class="button button1">Leaflet Map</button>
+        </div>
+      </div>
+
+      <div class="col-8 top_buffer">
+        <h5 class="card-header text-center text-white bg-info">Average Summary Table</h5>
+        <table id="comparison-table" class="col-12" style="width: 100%">
+          <tr class="columnHeaders">
+            <th class="columnHeader emptyCell" title="Empty cell" style="width: 20%"></th>
+            <th scope ="col" id="loc1" class="columnHeader text-center" style="width: 40%"></th>
+            <th scope ="col" id="loc2" class="columnHeader text-center" style="width: 40%"></th>
+          </tr>
+          <tr>
+            <th scope="col" class="columnHeader text-center">Price</th>
+            <td id="price0" class="text-center"></td>
+            <td id="price1" class="text-center"></td>
+          </tr>
+          <tr>
+            <th scope="col" class="columnHeader text-center">Median Household Income</th>
+            <td id="income0" class="text-center"></td>
+            <td id="income1" class="text-center"></td>
+          </tr>
+          <tr>
+            <th scope="col" class="columnHeader text-center">Living Space</th>
+            <td id="space0" class="text-center"></td>
+            <td id="space1" class="text-center"></td>
+          </tr>
+          <tr>
+            <th scope="col" class="columnHeader text-center">Beds/Baths</th>
+            <td id="rooms0" class="text-center"></td>
+            <td id="rooms1" class="text-center"></td>
+          </tr>
+          <tr>
+            <th scope="col" class="columnHeader text-center">Population Density</th>
+            <td id="pop0" class="text-center"></td>
+            <td id="pop1" class="text-center"></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="col-2 top_buffer">
+        <div class="card card-body bg-light">
+          <h6>State to Compare:</h6>
+          <select id="selCompare" onchange="optionChanged2(this.value)"></select>
+        </div>
+        <div class="col-12">
+          <div class="card card-body bg-light">
+            <h6>City to Compare:</h6>
+            <select id="selCity2" onchange="optionChanged2(this.value)"></select>
+          </div>
+        <div class="card card-body bg-light">
+          <h6>Zip Code to Compare:</h6>
+          <select id="selCompare2" onchange="optionChanged2(this.value)"></select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row top_buffer">
+
+      <div class="col-6">
+        <h5 class="card-header text-center text-white bg-info">Median Household Income vs. House Price</h5>
+        <div class ="card bg-light card-group">
+          <div id="histogram" class="col-5 mx-auto"></div>
+          <div id="histogram2" class="col-5 mx-auto"></div>
+        </div>
+      </div>
+      <div class="col-6 left_buffer">
+        <h5 class="card-header text-center text-white bg-info">Living Space vs. House Price</h5>
+        <div class="card bg-light card-group">
+          <div id="scatter" class="col-5 mx-auto"></div>
+          <div id="scatter2" class="col-5 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- <script type="text/javascript" src="static/js/data_new.js"></script> -->
+  <script type="text/javascript" src="static/js/scatter.js"></script>
+
+</body>
+
+</html>

@@ -1,53 +1,110 @@
-console.log(housingData[0])
-console.log(d3.select("#selCompare").html());
+//console.log(housingData[0])
 
-var stateDropdown = d3.select("#selDataset");
+const url = "/api/v1.0/housingjson";
 
-var states = [];
+var globalData = [];
 
-for (let i = 0; i < housingData.length; i++) {
+/* d3.json(url).then(function(housingData) {
+    
+    var stateDropdown = d3.select("#selDataset");
 
-    if (states.includes(housingData[i].State) == false) {
-        
-        states.push(housingData[i].State);
+    var states = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (states.includes(housingData[i].State) == false) {
+            
+            states.push(housingData[i].State);
+        }
     }
-}
 
-states.sort();
-states.unshift("Select state...");
+    states.sort();
+    states.unshift("Select state...");
 
-var cityDropdown = d3.select("#selCity");
+    var cityDropdown = d3.select("#selCity");
 
-var cities = [];
+    var cities = [];
 
-for (let i = 0; i < housingData.length; i++) {
+    for (let i = 0; i < housingData.length; i++) {
 
-    if (cities.includes(housingData[i].City) == false) {
-        
-        cities.push(housingData[i].City);
+        if (cities.includes(housingData[i].City) == false) {
+            
+            cities.push(housingData[i].City);
+        }
     }
-}
 
-cities.sort();
-cities.unshift("Select city...");
+    cities.sort();
+    cities.unshift("Select city...");
 
-var zipDropdown = d3.select("#selDataset2");
+    var zipDropdown = d3.select("#selDataset2");
 
-var zipcodes = ["Select zip code..."];
+    var zipcodes = ["Select zip code..."];
 
-for (let i = 0; i < housingData.length; i++) {
+    for (let i = 0; i < housingData.length; i++) {
 
-    if (zipcodes.includes(housingData[i]['Zip Code']) == false) {
-        
-        zipcodes.push(housingData[i]['Zip Code']);
+        if (zipcodes.includes(housingData[i]['Zip Code']) == false) {
+            
+            zipcodes.push(housingData[i]['Zip Code']);
+        }
     }
-}
 
-stateCompare = d3.select("#selCompare");
-cityCompare = d3.select("#selCity2");
-zipCompare = d3.select("#selCompare2");
+    var stateCompare = d3.select("#selCompare");
+    var cityCompare = d3.select("#selCity2");
+    var zipCompare = d3.select("#selCompare2");
 
-function init() {
+}); */
+
+function init(data) {
+
+    globalData.push(data);
+
+    var housingData = globalData[0];
+
+    var stateDropdown = d3.select("#selDataset");
+
+    var states = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (states.includes(housingData[i].State) == false) {
+            
+            states.push(housingData[i].State);
+        }
+    }
+
+    states.sort();
+    states.unshift("Select state...");
+
+    var cityDropdown = d3.select("#selCity");
+
+    var cities = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (cities.includes(housingData[i].City) == false) {
+            
+            cities.push(housingData[i].City);
+        }
+    }
+
+    cities.sort();
+    cities.unshift("Select city...");
+
+    var zipDropdown = d3.select("#selDataset2");
+
+    var zipcodes = ["Select zip code..."];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (zipcodes.includes(housingData[i]['Zip Code']) == false) {
+            
+            zipcodes.push(housingData[i]['Zip Code']);
+        }
+    }
+
+    var stateCompare = d3.select("#selCompare");
+    var cityCompare = d3.select("#selCity2");
+    var zipCompare = d3.select("#selCompare2");
 
     states.map(state => stateDropdown.append("option").text(state).property("value", state));
 
@@ -64,12 +121,12 @@ function init() {
     let firstState = states[1];
     let secondState = states[2];
 
-    createScatter(firstState);
-    createComparescatter(secondState);
+    createScatter(firstState, secondState);
     populateTable(firstState, secondState);
-}
+};
 
 function mean(array) {
+
     return array.reduce((a, b) => a + b) / array.length;
 }
 
@@ -79,238 +136,153 @@ function getStandardDeviation (array) {
     return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
 }
 
+function createScatter(selectItem, compareItem) {
 
-function createScatter(selectItem) {
-// maybe make a variable based function out of this selected part so its not repeated 3 times in the code//
-    if (stateDropdown.text().includes(selectItem) == true) {
-
-        var itemCurrent = housingData.filter(property => property.State == selectItem);
-    }
-    else if (cityDropdown.text().includes(selectItem) == true) {
-
-        var itemCurrent = housingData.filter(property => property.City == selectItem);
-    }
-    else {
-
-        var itemCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
-    }
-
-    let price  = [];
-    let income = [];
-    let space = [];
+    let itemCurrent = [setLocation(selectItem), setLocation(compareItem)];
 
     for (let i = 0; i < itemCurrent.length; i++) {
 
-        price.push(itemCurrent[i].Price);
-        income.push(itemCurrent[i]["Median Household Income"]);
-        space.push(itemCurrent[i]["Living Space"]);
-    }
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-    let trace1 = {
-        x: price,
-        name: 'Price',
-        type: 'histogram',
-        autobinx: false,
-        histnorm: 'percent',
-        opacity: 0.75,
-        xbins: {
-            end: mean(price) + getStandardDeviation(price) * 2,
-            size: 50000,
-            start: 0
-        },
-        marker: {color: 'red'}
-    };
+        let price  = [];
+        let income = [];
+        let space = [];
 
-    let trace2 = {
-        x: income,
-        name: 'Income',
-        type: 'histogram',
-        autobinx: false,
-        histnorm: 'percent',
-        opacity: 0.75,
-        xbins: {
-            end: Math.max(...income),
-            size: 20000,
-            start: 0
-        },
-        marker: {color: 'green'}
-    };
+        for (let j = 0; j < itemCurrent[i].length; j++) {
 
-    let layoutHist = {
-        barmode: 'overlay',
-        title: {
-            text: `(${selectItem})`,
-            font: {
-                size: 16
-            }
-        },
-        yaxis: {title: "Percent"}
-    };
+            price.push(itemCurrent[i][j].Price);
+            income.push(itemCurrent[i][j]["Median Household Income"]);
+            space.push(itemCurrent[i][j]["Living Space"]);
 
-    let trace3 = {
-        x: space,
-        y: price,
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-            size: 7,
-            color: space,
-            colorscale: 'Jet'
         }
-    };
+        
+        if (i == 0) {
 
-    let layout = {
-        title: {
-            text: `(${selectItem})`,
-            font: {
-                size: 16
-            }
-        },
-        xaxis: {
-            title: {
-                text: 'Living Space',
-                font: {
-                    size: 12
-                }
-            }
+            var graphTitle = selectItem;
+            var histID = 'histogram';
+            var scatID = 'scatter';
+        }
+        else {
             
-        },
-        yaxis: {
+            var graphTitle = compareItem;
+            var histID = 'histogram2';
+            var scatID = 'scatter2';
+        }
+
+        let trace1 = {
+            x: price,
+            name: 'Price',
+            type: 'histogram',
+            autobinx: false,
+            histnorm: 'percent',
+            opacity: 0.75,
+            xbins: {
+                end: mean(price) + getStandardDeviation(price) * 2,
+                size: 50000,
+                start: 0
+            },
+            marker: {color: 'red'}
+        };
+
+        let trace2 = {
+            x: income,
+            name: 'Income',
+            type: 'histogram',
+            autobinx: false,
+            histnorm: 'percent',
+            opacity: 0.75,
+            xbins: {
+                end: Math.max(...income),
+                size: 20000,
+                start: 0
+            },
+            marker: {color: 'green'}
+        };
+
+        let layoutHist = {
+            barmode: 'overlay',
             title: {
-                text: 'Price',
+                text: `(${graphTitle})`,
                 font: {
-                    size: 12
+                    size: 16
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'USD ($)',
+                    font: {
+                        size: 12
+                    }
+                }
+                
+            },
+            yaxis: {
+                title: {
+                    text: 'Percent',
+                    font: {
+                        size: 12
+                    }
+                }
+            }
+        };
+
+        let trace3 = {
+            x: space,
+            y: price,
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+                size: 7,
+                color: space,
+                colorscale: 'Jet'
+            }
+        };
+
+        let layout = {
+            title: {
+                text: `(${graphTitle})`,
+                font: {
+                    size: 16
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Living Space (sqft)',
+                    font: {
+                        size: 12
+                    }
+                }
+                
+            },
+            yaxis: {
+                title: {
+                    text: 'Price ($)',
+                    font: {
+                        size: 12
+                    }
                 }
             }
         }
+
+        var dataHist = [trace1, trace2];
+
+        Plotly.newPlot(histID, dataHist, layoutHist);
+
+        var data = [trace3];
+
+        Plotly.newPlot(scatID, data, layout);
     }
-
-    var dataHist = [trace1, trace2];
-
-    Plotly.newPlot('scatter', dataHist, layoutHist);
-
-    var data = [trace3];
-
-    Plotly.newPlot('layout_scatter', data, layout);
-}
-
-function createComparescatter(selectItem) {
-
-    if (stateCompare.text().includes(selectItem) == true) {
-
-        var compCurrent = housingData.filter(property => property.State == selectItem);
-    }
-    else if (cityCompare.text().includes(selectItem) == true) {
-
-        var compCurrent = housingData.filter(property => property.City == selectItem);
-
-    }
-    else {
-
-        var compCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
-    }
-
-    let priceComp  = [];
-    let incomeComp = [];
-    let spaceComp = [];
-
-    for (let i = 0; i < compCurrent.length; i++) {
-
-        priceComp.push(compCurrent[i].Price);
-        incomeComp.push(compCurrent[i]["Median Household Income"]);
-        spaceComp.push(compCurrent[i]["Living Space"]);
-    }
-
-    let trace1 = {
-        x: priceComp,
-        name: 'Price',
-        type: 'histogram',
-        autobinx: false,
-        histnorm: 'percent',
-        opacity: 0.75,
-        xbins: {
-            end: mean(priceComp) + getStandardDeviation(priceComp) * 2,
-            size: 50000,
-            start: 0
-        },
-        marker: {color: 'red'}
-    };
-
-    let trace2 = {
-        x: incomeComp,
-        name: 'Income',
-        type: 'histogram',
-        autobinx: false,
-        histnorm: 'percent',
-        opacity: 0.75,
-        xbins: {
-            end: Math.max(...incomeComp),
-            size: 20000,
-            start: 0
-        },
-        marker: {color: 'green'}
-    };
-
-    let layoutHist = {
-        barmode: 'overlay',
-        title: {
-            text: `(${selectItem})`,
-            font: {
-                size: 16
-            }
-        },
-        yaxis: {title: "Percent"}
-    };
-
-    let trace3 = {
-        x: spaceComp,
-        y: priceComp,
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-            size: 7,
-            color: spaceComp,
-            colorscale: 'Jet'
-        }
-    };
-
-    let layout = {
-        title: {
-            text: `(${selectItem})`,
-            font: {
-                size: 16
-            }
-        },
-        xaxis: {
-            title: {
-                text: 'Living Space',
-                font: {
-                    size: 12
-                }
-            }
-            
-        },
-        yaxis: {
-            title: {
-                text: 'Price',
-                font: {
-                    size: 12
-                }
-            }
-        }
-    }
-
-    let dataHist = [trace1, trace2];
-
-    Plotly.newPlot('scatter2', dataHist, layoutHist);
-
-    let data = [trace3];
-
-    Plotly.newPlot('layout_scatter2', data, layout);
-
 }
 
 function setLocation(location) {
+
+    let housingData = globalData[0];
+
+    var stateDropdown = d3.select("#selDataset");
+    var cityDropdown = d3.select("#selCity");
+    var zipDropdown = d3.select("#selDataset2");
+
+    var stateCompare = d3.select("#selCompare");
+    var cityCompare = d3.select("#selCity2");
+    var zipCompare = d3.select("#selCompare2");
 
     if (stateDropdown.text().includes(location) == true) {
 
@@ -324,34 +296,19 @@ function setLocation(location) {
 
         var itemCurrent = housingData.filter(property => property['Zip Code'] == location);
     }
-    //console.log(itemCurrent);
+
     return itemCurrent;
+
 }
 
 function populateTable(selectItem, compareItem) {
 
     d3.select("#loc1").text(selectItem);
     d3.select("#loc2").text(compareItem);
-    
-
-/*     if (stateDropdown.text().includes(selectItem) == true) {
-
-        var itemCurrent = housingData.filter(property => property.State == selectItem);
-    }
-    else if (cityDropdown.text().includes(selectItem) == true) {
-
-        var itemCurrent = housingData.filter(property => property.City == selectItem);
-    }
-    else {
-
-        var itemCurrent = housingData.filter(property => property['Zip Code'] == selectItem);
-    } */
 
     let itemCurrent = [setLocation(selectItem), setLocation(compareItem)];
 
     for (let i = 0; i < itemCurrent.length; i++) {
-
-        //console.log(itemCurrent[i]);
 
         let price  = [];
         var income = [];
@@ -382,13 +339,7 @@ function populateTable(selectItem, compareItem) {
                 popzips.push(current['Zip Code']);
 
             }
-
-            console.log(selectItem, income, mean(income))
-
         }
-
-        //temp fix for colorado springs
-        var income = income.filter(num => num != '');
 
         d3.select(`#price${i}`).text(`$${Math.round(mean(price))}`);
 
@@ -404,76 +355,82 @@ function populateTable(selectItem, compareItem) {
 
 function adjustZips(dropdown, citystate) {
 
-    //if (dropdown.text().includes(citystate) == true) {
+    var stateDropdown = d3.select("#selDataset");
+    var cityDropdown = d3.select("#selCity");
+    var zipDropdown = d3.select("#selDataset2");
+    var stateCompare = d3.select("#selCompare");
+    var cityCompare = d3.select("#selCity2");
+    var zipCompare = d3.select("#selCompare2");
 
-        if (dropdown == stateDropdown) {
+    let housingData = globalData[0];
 
-            cityDropdown.selectAll("option").remove();
-            var setCities = cityDropdown;
+    var dropdown = dropdown.property('id');
 
-            zipDropdown.selectAll("option").remove();
-            var setZips = zipDropdown;
-            var zipcodes = housingData.filter(property => property.State == citystate);
-        }
-        else if (dropdown == stateCompare) {
+    if (dropdown == stateDropdown.property('id')) {
 
-            cityCompare.selectAll("option").remove();
-            var setCities = cityCompare;
+        cityDropdown.selectAll("option").remove();
+        var setCities = cityDropdown;
 
-            zipCompare.selectAll("option").remove();
-            var setZips = zipCompare;
-            var zipcodes = housingData.filter(property => property.State == citystate);
-        }
-        else if (dropdown == cityDropdown) {
+        zipDropdown.selectAll("option").remove();
+        var setZips = zipDropdown;
+        var zipcodes = housingData.filter(property => property.State == citystate);
+    }
+    else if (dropdown == stateCompare.property('id')) {
 
-            zipDropdown.selectAll("option").remove();
-            var setZips = zipDropdown;
-            var zipcodes = housingData.filter(property => property.City == citystate);
-        }
-        else {
+        cityCompare.selectAll("option").remove();
+        var setCities = cityCompare;
 
-            zipCompare.selectAll("option").remove();
-            var setZips = zipCompare;
-            var zipcodes = housingData.filter(property => property.City == citystate);
-        }
+        zipCompare.selectAll("option").remove();
+        var setZips = zipCompare;
+        var zipcodes = housingData.filter(property => property.State == citystate);
+    }
+    else if (dropdown == cityDropdown.property('id')) {
 
-        if (setCities) {
+        zipDropdown.selectAll("option").remove();
+        var setZips = zipDropdown;
+        var zipcodes = housingData.filter(property => property.City == citystate);
+    }
+    else {
 
-            let cities = housingData.filter(property => property.State == citystate);
+        zipCompare.selectAll("option").remove();
+        var setZips = zipCompare;
+        var zipcodes = housingData.filter(property => property.City == citystate);
+    }
 
-            let stateCities = [];
+    if (setCities) {
 
-            for (let i = 0; i < cities.length; i++) {
+        let cities = housingData.filter(property => property.State == citystate);
 
-                let currentCity = cities[i].City;
-                
-                if (stateCities.includes(currentCity) == false) {
+        let stateCities = [];
 
-                    stateCities.push(currentCity);
+        for (let i = 0; i < cities.length; i++) {
 
-                    setCities.append("option").text(currentCity).property("value", currentCity);
-
-                }
-            }
-        }
-
-        //let zipcodes = housingData.filter(property => property.State == citystate);
-
-        let stateZipcodes = [];
-
-        for (let i = 0; i < zipcodes.length; i++) {
-
-            let currentZip = zipcodes[i]['Zip Code'];
+            let currentCity = cities[i].City;
             
-            if (stateZipcodes.includes(currentZip) == false) {
+            if (stateCities.includes(currentCity) == false) {
 
-                stateZipcodes.push(currentZip);
+                stateCities.push(currentCity);
 
-                setZips.append("option").text(currentZip).property("value", currentZip);
+                setCities.append("option").text(currentCity).property("value", currentCity);
 
             }
         }
-    //}
+    }
+
+    let stateZipcodes = [];
+
+    for (let i = 0; i < zipcodes.length; i++) {
+
+        let currentZip = zipcodes[i]['Zip Code'];
+        
+        if (stateZipcodes.includes(currentZip) == false) {
+
+            stateZipcodes.push(currentZip);
+
+            setZips.append("option").text(currentZip).property("value", currentZip);
+
+        }
+    }
 }
 
 function optionChanged(item) {
@@ -484,8 +441,33 @@ function optionChanged(item) {
 
     console.log("Comparison is", holder);
 
-    createScatter(item);
+    createScatter(item, holder);
     populateTable(item, holder);
+
+    let housingData = globalData[0];
+
+    var states = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (states.includes(housingData[i].State) == false) {
+            
+            states.push(housingData[i].State);
+        }
+    }
+
+    var cities = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (cities.includes(housingData[i].City) == false) {
+            
+            cities.push(housingData[i].City);
+        }
+    }
+
+    var stateDropdown = d3.select("#selDataset");
+    var cityDropdown = d3.select("#selCity");
 
     if (states.includes(item) == true) {
 
@@ -505,9 +487,33 @@ function optionChanged2(item) {
 
     console.log("Original is", holder);
 
-    createComparescatter(item);
-    populateTable(holder, item); //need fix for colorado springs for some reason having extreme large means
-    
+    createScatter(holder, item);
+    populateTable(holder, item);
+
+    let housingData = globalData[0];
+
+    var states = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (states.includes(housingData[i].State) == false) {
+            
+            states.push(housingData[i].State);
+        }
+    }
+
+    var cities = [];
+
+    for (let i = 0; i < housingData.length; i++) {
+
+        if (cities.includes(housingData[i].City) == false) {
+            
+            cities.push(housingData[i].City);
+        }
+    }
+
+    var stateCompare = d3.select("#selCompare");
+    var cityCompare = d3.select("#selCity2");
 
     if (states.includes(item) == true) {
 
@@ -519,4 +525,4 @@ function optionChanged2(item) {
     }
 }
 
-init();
+d3.json(url).then(data => init(data));
