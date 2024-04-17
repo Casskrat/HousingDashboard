@@ -1,15 +1,7 @@
 let markers=[]
-function mapRadius(price) {
-    if (price <= 100000) return 10000;
-    else if (price <= 200000) return 20000;
-    else if (price <= 300000) return 30000;
-    else if (price <= 400000) return 40000;
-    else if (price <= 500000) return 50000;
-    else if (price <= 600000) return 60000;
-    else return 7000;
-    };
-
+// Run through all of the data
 for (let i = 0; i < housing.length; i++) {
+    // create the radius of markers
     let radius = "";
     if (housing[i].Beds <=1) {
         radius = 50;
@@ -26,13 +18,16 @@ for (let i = 0; i < housing.length; i++) {
     else {
         radius = 130;
     }
-
+//create fillcolor for markers
     let fillcolor = "";
-    if (housing[i].Price <=200000) {
+    if (housing[i].Price <=100000) {
         fillcolor = "yellow";
     }
-    else if (housing[i].Price <=300000) {
+    else if (housing[i].Price <=200000) {
         fillcolor = "orange";
+    }
+    else if (housing[i].Price <=300000) {
+        fillcolor = "#CD5C5C";
     }
     else if (housing[i].Price <=400000) {
         fillcolor = "red";
@@ -43,6 +38,7 @@ for (let i = 0; i < housing.length; i++) {
     else {
         fillcolor = "maroon";
     }
+// creates markers and pushes them to map
     markers.push(
         L.circle([housing[i].Latitude, housing[i].Longitude],{
             opacity: 30,
@@ -54,7 +50,7 @@ for (let i = 0; i < housing.length; i++) {
             weight: 0.5
         }).bindPopup(`<h2>${housing[i].City}, ${housing[i].State}</h1> <hr> <h3>Price:$${housing[i].Price}</h3> <hr> <h3>Number of Beds:${housing[i].Beds}</h3>`)
 )};
-
+//create the tile layers
 let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 })
@@ -77,10 +73,11 @@ let myMap = L.map("map", {
     center: [37.09, -95.71],
     zoom: 4
 });
+//add layer control to map
 L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
 }).addTo(myMap);
-
+//Function for legend colors
 function Fillcolor(prices){
     if (prices <=100) return "yellow";
     else if (prices <=200) return "orange";
@@ -89,7 +86,7 @@ function Fillcolor(prices){
     else if (prices <=500) return "purple";
     else return "maroon";
 }
-
+//create legend and add to map
 var legend = L.control({ position: "bottomright" });
 legend.onAdd = function(myMap) {
     var div = L.DomUtil.create("div", "info legend"),
