@@ -51,6 +51,11 @@ def home():
 def openmap():
 
     return render_template("map.html")
+
+@app.route("/heatmap")
+def openmap2():
+
+    return render_template("heatmap.html")
     
 
 @app.route("/api/v1.0/housingjson")

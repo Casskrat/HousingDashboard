@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>National Housing Costs</title>
+  <title>National Housing Data</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -20,6 +20,9 @@
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
   crossorigin=""></script>
 
+  <!-- Leaflet Heat plugin -->
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
   <!-- Our CSS -->
   <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 
@@ -31,7 +34,7 @@
 
     <div class="row">
       <div class="col-md-12 p-5 text-center bg-info">
-        <h1 class="text-white">National Housing Cost Dashboard</h1>
+        <h1 class="text-white">National Housing Data Dashboard</h1>
         <p class="top_buffer">Use the interactive dropdown menus below to explore and compare different U.S. states, cities, and zip codes</p>
       </div>
     </div>
@@ -56,7 +59,7 @@
           </div>
         </div>
         <div class="col-12">
-          <button id="mapfinal" class="button button1" onclick="window.open('/leafletmap', '_blank')">Leaflet Map</button>
+          <button id="maphouse" class="button button1" onclick="window.open('/leafletmap', '_blank')">House Map</button>
         </div>
       </div>
 
@@ -109,6 +112,9 @@
         <div class="card card-body bg-light">
           <h6>Zip Code to Compare:</h6>
           <select id="selCompare2" onchange="optionChanged2(this.value)"></select>
+        </div>
+        <div class="col-12">
+          <button id="mapheat" class="button button1" onclick="window.open('/heatmap', '_blank')">Heat Map</button>
         </div>
       </div>
 
