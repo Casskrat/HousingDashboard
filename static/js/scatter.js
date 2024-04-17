@@ -4,63 +4,13 @@ const url = "/api/v1.0/housingjson";
 
 var globalData = [];
 
-/* d3.json(url).then(function(housingData) {
-    
-    var stateDropdown = d3.select("#selDataset");
-
-    var states = [];
-
-    for (let i = 0; i < housingData.length; i++) {
-
-        if (states.includes(housingData[i].State) == false) {
-            
-            states.push(housingData[i].State);
-        }
-    }
-
-    states.sort();
-    states.unshift("Select state...");
-
-    var cityDropdown = d3.select("#selCity");
-
-    var cities = [];
-
-    for (let i = 0; i < housingData.length; i++) {
-
-        if (cities.includes(housingData[i].City) == false) {
-            
-            cities.push(housingData[i].City);
-        }
-    }
-
-    cities.sort();
-    cities.unshift("Select city...");
-
-    var zipDropdown = d3.select("#selDataset2");
-
-    var zipcodes = ["Select zip code..."];
-
-    for (let i = 0; i < housingData.length; i++) {
-
-        if (zipcodes.includes(housingData[i]['Zip Code']) == false) {
-            
-            zipcodes.push(housingData[i]['Zip Code']);
-        }
-    }
-
-    var stateCompare = d3.select("#selCompare");
-    var cityCompare = d3.select("#selCity2");
-    var zipCompare = d3.select("#selCompare2");
-
-}); */
-
 function init(data) {
 
     globalData.push(data);
 
     var housingData = globalData[0];
 
-    console.log(housingData[0])
+    //console.log(housingData[0])
 
     var stateDropdown = d3.select("#selDataset");
 

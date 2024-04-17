@@ -46,6 +46,11 @@ def home():
     #     f"/api/v1.0/housingjson"
     # )
     return render_template("index.html")
+
+@app.route("/leafletmap")
+def openmap():
+
+    return render_template("map.html")
     
 
 @app.route("/api/v1.0/housingjson")
