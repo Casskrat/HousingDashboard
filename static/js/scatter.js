@@ -60,6 +60,8 @@ function init(data) {
 
     var housingData = globalData[0];
 
+    console.log(housingData[0])
+
     var stateDropdown = d3.select("#selDataset");
 
     var states = [];
@@ -140,21 +142,55 @@ function createScatter(selectItem, compareItem) {
 
     let itemCurrent = [setLocation(selectItem), setLocation(compareItem)];
 
+    let estimate = [];
+    let estimate2 = [];
+
     for (let i = 0; i < itemCurrent.length; i++) {
 
         let price  = [];
         let income = [];
         let space = [];
 
+
+
+        let zips3 = [];
+        let zips6 = [];
+        let zips1 = [];
+
+        let monthThree = [];
+        let monthSix = [];
+        let year = [];
+
         for (let j = 0; j < itemCurrent[i].length; j++) {
 
-            price.push(itemCurrent[i][j].Price);
-            income.push(itemCurrent[i][j]["Median Household Income"]);
-            space.push(itemCurrent[i][j]["Living Space"]);
+            let current = itemCurrent[i][j];
 
+            price.push(current.Price);
+            income.push(current["Median Household Income"]);
+            space.push(current["Living Space"]);
+
+            if (monthThree.includes(current['3Month']) == false && zips3.includes(current['Zip Code']) == false) {
+
+                monthThree.push(current['3Month']);
+                zips3.push(current['Zip Code']);
+            }
+            if (monthSix.includes(current['6Month']) == false && zips6.includes(current['Zip Code']) == false) {
+
+                monthSix.push(current['6Month']);
+                zips6.push(current['Zip Code']);
+            }
+            if (year.includes(current['1Year']) == false && zips1.includes(current['Zip Code']) == false) {
+
+                year.push(current['1Year']);
+                zips1.push(current['Zip Code']);
+            }
         }
         
         if (i == 0) {
+
+            estimate.push(mean(monthThree));
+            estimate.push(mean(monthSix));
+            estimate.push(mean(year));
 
             var graphTitle = selectItem;
             var histID = 'histogram';
@@ -162,6 +198,10 @@ function createScatter(selectItem, compareItem) {
         }
         else {
             
+            estimate2.push(mean(monthThree));
+            estimate2.push(mean(monthSix));
+            estimate2.push(mean(year));
+
             var graphTitle = compareItem;
             var histID = 'histogram2';
             var scatID = 'scatter2';
@@ -270,6 +310,68 @@ function createScatter(selectItem, compareItem) {
 
         Plotly.newPlot(scatID, data, layout);
     }
+
+    let trace4 = {
+        type: 'scatter',
+        x: [90, 180, 365],
+        y: estimate,
+        mode: 'lines+markers',
+        name: selectItem,
+        line: {
+            color: 'red',
+            width: 3
+        }
+    }
+
+    let trace5 = {
+        type: 'scatter',
+        x: [90, 180, 365],
+        y: estimate2,
+        mode: 'lines+markers',
+        name: compareItem,
+        line: {
+            color: 'blue',
+            width: 3
+        }
+    }
+
+    let linelayout = {
+        title: {
+            text: `Base Date of Estimation: ${globalData[0][0].BaseDate}`,
+            font: {
+                size: 16
+            }
+        },
+        xaxis: {
+            title: {
+                text: "Time from Base Date",
+                font: {
+                    size: 12
+                }
+            },
+            showticklabels: true,
+            showline: true,
+            nticks: 3,
+            tickvals: [90, 180, 270, 365],
+            ticktext: ['3 Months', '6 Months', '9 Months', '12 Months'],
+            autorange: false,
+            range: [80, 375]
+
+        },
+        yaxis: {
+            title: {
+                text: "Percent Change",
+                font: {
+                    size: 12
+                }
+            }
+        }
+        
+    }
+
+    let dataLine = [trace4, trace5];
+
+    Plotly.newPlot('line', dataLine, linelayout);
 }
 
 function setLocation(location) {
