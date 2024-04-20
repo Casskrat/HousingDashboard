@@ -32,6 +32,7 @@
 
   <div class="container-fluid">
 
+    <!-- Header row -->
     <div class="row">
       <div class="col-md-12 p-5 text-center bg-info">
         <h1 class="text-white">National Housing Data Dashboard</h1>
@@ -41,6 +42,7 @@
 
     <div class="row">
 
+      <!-- Primary dropdowns -->
       <div class="col-2 top_buffer">
         <div class="card card-body bg-light">
           <h6>State:</h6>
@@ -58,11 +60,13 @@
             <select id="selDataset2" onchange="optionChanged(this.value)"></select>
           </div>
         </div>
+        <!-- House Map Button -->
         <div class="col-12">
           <button id="maphouse" class="button button1" onclick="window.open('/leafletmap', '_blank')">House Map</button>
         </div>
       </div>
 
+      <!-- Summary Table -->
       <div class="col-8 top_buffer">
         <h5 class="card-header text-center text-white bg-info">Average Summary Table</h5>
         <table id="comparison-table" class="col-12" style="width: 100%">
@@ -99,6 +103,7 @@
         </table>
       </div>
 
+      <!-- Comparison dropdowns -->
       <div class="col-2 top_buffer">
         <div class="card card-body bg-light">
           <h6>State to Compare:</h6>
@@ -113,6 +118,7 @@
           <h6>Zip Code to Compare:</h6>
           <select id="selCompare2" onchange="optionChanged2(this.value)"></select>
         </div>
+        <!-- Heat Map Button -->
         <div class="col-12">
           <button id="mapheat" class="button button1" onclick="window.open('/heatmap', '_blank')">Heat Map</button>
         </div>
@@ -122,6 +128,7 @@
 
     <div class="row top_buffer">
 
+      <!-- Histogram -->
       <div class="col-6">
         <h5 class="card-header text-center text-white bg-info">Median Household Income vs. House Price</h5>
         <div class ="card bg-light card-group">
@@ -129,6 +136,7 @@
           <div id="histogram2" class="col-5 mx-auto"></div>
         </div>
       </div>
+      <!-- Scatterplot -->
       <div class="col-6 left_buffer">
         <h5 class="card-header text-center text-white bg-info">Living Space vs. House Price</h5>
         <div class="card bg-light card-group">
@@ -140,6 +148,7 @@
 
     <div class="row top_buffer">
 
+      <!-- Line Graph -->
       <div class="col-12">
         <h5 class="card-header text-center text-white bg-info">Average Future Home Value Estimations</h5>
         <div class ="card bg-light">
@@ -148,18 +157,11 @@
       </div>
     </div>
 
-
-
-      <!-- The div where we'll insert our map -->
-
-
-
   </div>
 
 
-
+  <!-- Our primary javascript file path for dashboard homepage -->
   <script type="text/javascript" src="static/js/scatter.js"></script>
-<!--   <script type="text/javascript" src="static/js/logic.js"></script> -->
 
 </body>
 

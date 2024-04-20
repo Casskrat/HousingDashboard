@@ -35,16 +35,12 @@ app = Flask(__name__)
 # Flask Routes
 #################################################
 
-# Establish a home route displaying available routes in the API
-# as well as formatting instructions for start and start-end routes
+# Establish a home route that renders the primary dashboard html
+# as well as any extra routes necessary for links from dashboard
+
 @app.route("/")
 def home():
-    # return (
-    #     f"Welcome to the Housing Data API.<br/>"
-    #     f"<br/>"
-    #     f"Available Routes:<br/>"
-    #     f"/api/v1.0/housingjson"
-    # )
+
     return render_template("index.html")
 
 @app.route("/leafletmap")

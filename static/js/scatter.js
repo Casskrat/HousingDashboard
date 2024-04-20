@@ -1,17 +1,18 @@
-//console.log(housingData[0])
-
+// Create constant variable for API url for data access
 const url = "/api/v1.0/housingjson";
 
+// Create empty array to push API data to
 var globalData = [];
 
+// Initialization function to start the dashboard
 function init(data) {
 
+    // Push API data to a global scoped array for easy access
     globalData.push(data);
 
     var housingData = globalData[0];
 
-    //console.log(housingData[0])
-
+    // Use d3 to connect to the states dropdown and create an array of all states in the database
     var stateDropdown = d3.select("#selDataset");
 
     var states = [];
@@ -27,6 +28,7 @@ function init(data) {
     states.sort();
     states.unshift("Select state...");
 
+    // Use d3 to connect to the cities dropdown and create an array of all cities in the database
     var cityDropdown = d3.select("#selCity");
 
     var cities = [];
@@ -42,6 +44,7 @@ function init(data) {
     cities.sort();
     cities.unshift("Select city...");
 
+    // Use d3 to connect to the zip codes dropdown and create an array of all zip codes in the database
     var zipDropdown = d3.select("#selDataset2");
 
     var zipcodes = ["Select zip code..."];
@@ -54,10 +57,12 @@ function init(data) {
         }
     }
 
+    // Use d3 to connect to the comparison dropdowns for state, city, and zip code
     var stateCompare = d3.select("#selCompare");
     var cityCompare = d3.select("#selCity2");
     var zipCompare = d3.select("#selCompare2");
 
+    // Push the states, cities, and zipcodes arrays to each dropdown as select options
     states.map(state => stateDropdown.append("option").text(state).property("value", state));
 
     cities.map(city => cityDropdown.append("option").text(city).property("value", city));
@@ -73,30 +78,37 @@ function init(data) {
     let firstState = states[1];
     let secondState = states[2];
 
+    // Call functions to create visualizations on initialization
     createScatter(firstState, secondState);
     populateTable(firstState, secondState);
 };
 
+// Create function to calculate mean
 function mean(array) {
 
     return array.reduce((a, b) => a + b) / array.length;
 }
 
+// Create function to calculate standard deviation
 function getStandardDeviation (array) {
     const n = array.length
     const mean = array.reduce((a, b) => a + b) / n
     return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
 }
 
+// Create function to create all chart visualizations given a parameter for each location to be compared
 function createScatter(selectItem, compareItem) {
 
+    // Call set location to 
     let itemCurrent = [setLocation(selectItem), setLocation(compareItem)];
 
     let estimate = [];
     let estimate2 = [];
 
+    // Iterate through the primary option and the comparing option
     for (let i = 0; i < itemCurrent.length; i++) {
 
+        // Initialize arrays
         let price  = [];
         let income = [];
         let space = [];
@@ -111,6 +123,7 @@ function createScatter(selectItem, compareItem) {
         let monthSix = [];
         let year = [];
 
+        // Iterate through the associated location data and create arrays of each variable for plotting
         for (let j = 0; j < itemCurrent[i].length; j++) {
 
             let current = itemCurrent[i][j];
@@ -136,6 +149,7 @@ function createScatter(selectItem, compareItem) {
             }
         }
         
+        // Push and plot data based on if data is associated with the primary or comparing location
         if (i == 0) {
 
             estimate.push(mean(monthThree));
@@ -157,6 +171,7 @@ function createScatter(selectItem, compareItem) {
             var scatID = 'scatter2';
         }
 
+        // Establish trace for price histogram
         let trace1 = {
             x: price,
             name: 'Price',
@@ -172,6 +187,7 @@ function createScatter(selectItem, compareItem) {
             marker: {color: 'red'}
         };
 
+        // Establish trace for income histogram
         let trace2 = {
             x: income,
             name: 'Income',
@@ -187,6 +203,7 @@ function createScatter(selectItem, compareItem) {
             marker: {color: 'green'}
         };
 
+        // Establish histogram layout
         let layoutHist = {
             barmode: 'overlay',
             title: {
@@ -214,6 +231,7 @@ function createScatter(selectItem, compareItem) {
             }
         };
 
+        // Establish trace for scatterplot
         let trace3 = {
             x: space,
             y: price,
@@ -252,6 +270,7 @@ function createScatter(selectItem, compareItem) {
             }
         }
 
+        // Create charts for each location using plotly
         var dataHist = [trace1, trace2];
 
         Plotly.newPlot(histID, dataHist, layoutHist);
@@ -261,6 +280,7 @@ function createScatter(selectItem, compareItem) {
         Plotly.newPlot(scatID, data, layout);
     }
 
+    // Establish traces for estimations line graph
     let trace4 = {
         type: 'scatter',
         x: [90, 180, 365],
@@ -285,6 +305,7 @@ function createScatter(selectItem, compareItem) {
         }
     }
 
+    // Establish layout for estimations line graph
     let linelayout = {
         title: {
             text: `Base Date of Estimation: ${globalData[0][0].BaseDate}`,
@@ -319,11 +340,14 @@ function createScatter(selectItem, compareItem) {
         
     }
 
+    // Plot estimations line graph using plotly
     let dataLine = [trace4, trace5];
 
     Plotly.newPlot('line', dataLine, linelayout);
 }
 
+// Create function to identify if the dropdown option is a state, city, or zipcode and if it is 
+// our comparison or primary location and filter data accordingly
 function setLocation(location) {
 
     let housingData = globalData[0];
@@ -353,6 +377,7 @@ function setLocation(location) {
 
 }
 
+// Create function to populate the html table with averages based on selected locations
 function populateTable(selectItem, compareItem) {
 
     d3.select("#loc1").text(selectItem);
@@ -360,8 +385,10 @@ function populateTable(selectItem, compareItem) {
 
     let itemCurrent = [setLocation(selectItem), setLocation(compareItem)];
 
+    // Iterate through each selected location, primary and comparison
     for (let i = 0; i < itemCurrent.length; i++) {
 
+        // Initialize arrays
         let price  = [];
         var income = [];
         let space = [];
@@ -371,6 +398,7 @@ function populateTable(selectItem, compareItem) {
         let zips = [];
         let popzips = [];
 
+        // Iterate through each dataset variable and push data to the empty arrays
         for (let j = 0; j < itemCurrent[i].length; j++) {
 
             let current = itemCurrent[i][j];
@@ -393,6 +421,7 @@ function populateTable(selectItem, compareItem) {
             }
         }
 
+        // Use d3 to push averages for selected data to the appropriate cells in the table
         d3.select(`#price${i}`).text(`$${Math.round(mean(price))}`);
 
         d3.select(`#income${i}`).text(`$${Math.round(mean(income))}`);
@@ -405,8 +434,10 @@ function populateTable(selectItem, compareItem) {
     }
 }
 
+// Create function to adjust dropdowns to filter options scoped by selected state or city
 function adjustZips(dropdown, citystate) {
 
+    // Create variables to connect to html dropdowns
     var stateDropdown = d3.select("#selDataset");
     var cityDropdown = d3.select("#selCity");
     var zipDropdown = d3.select("#selDataset2");
@@ -416,8 +447,10 @@ function adjustZips(dropdown, citystate) {
 
     let housingData = globalData[0];
 
+    // Create variable to identify whether dropdown is a state, city, or zipcode 
     var dropdown = dropdown.property('id');
 
+    // Create conditional to filter data based on selected dropdown
     if (dropdown == stateDropdown.property('id')) {
 
         cityDropdown.selectAll("option").remove();
@@ -449,12 +482,14 @@ function adjustZips(dropdown, citystate) {
         var zipcodes = housingData.filter(property => property.City == citystate);
     }
 
+    // Conditional to run if a state dropdown is selected to filter cities
     if (setCities) {
 
         let cities = housingData.filter(property => property.State == citystate);
 
         let stateCities = [];
 
+        // Iterate through all cities and determine if city is present in selected state and udpate dropdown options
         for (let i = 0; i < cities.length; i++) {
 
             let currentCity = cities[i].City;
@@ -469,6 +504,7 @@ function adjustZips(dropdown, citystate) {
         }
     }
 
+    // Iterate through all zip codes and determine if zip code is present in selected state/city and udpate dropdown options
     let stateZipcodes = [];
 
     for (let i = 0; i < zipcodes.length; i++) {
@@ -485,6 +521,8 @@ function adjustZips(dropdown, citystate) {
     }
 }
 
+// Create function to run and call visualization creation and update dropdowns when 
+// a new dropdown item is selected
 function optionChanged(item) {
 
     console.log("Showing results for", item);
@@ -531,6 +569,8 @@ function optionChanged(item) {
     }
 }
 
+// Create function to run and call visualization creation and update dropdowns when 
+// a new dropdown comparison item is selected
 function optionChanged2(item) {
 
     console.log("Showing comparison results for", item);
@@ -577,4 +617,5 @@ function optionChanged2(item) {
     }
 }
 
+// Connect to the API using d3 and call the init function
 d3.json(url).then(data => init(data));
